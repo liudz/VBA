@@ -1,0 +1,90 @@
+Option Explicit
+
+Sub CNHandWriting()
+    Dim CNCharacter As Range
+    Dim CNParagraph As Paragraph
+    
+    Dim FontName() As String
+    Dim FontSize() As Single
+    Dim ParagraphSpace() As Single
+    
+    Dim i As Integer
+    Dim j As Integer
+    Dim CNFontSize As Integer
+    Dim k As Integer
+    
+    '   字体个数
+    i = 6
+    '   字体大小个数
+    j = 5
+    '   初始字体大小
+    CNFontSize = 15
+    '   段落行间距
+    k = 5
+    
+    ReDim FontName(i - 1)
+    FontName(0) = "陈静的字完整版"
+    FontName(1) = "萌妹子体"
+    FontName(2) = "李国夫手写体"
+    FontName(3) = "贱萌体"
+    FontName(4) = "逐浪大雪钢笔体"
+    FontName(5) = "逐浪小雪钢笔体"
+    
+    '   1 inch = 72 points
+    '   1 inch = 25.4 mm
+    '   1 mm = 2.8346 points
+    '   1 cm = 28.346 points
+    
+    ReDim FontSize(j - 1)
+    For i = 0 To j - 1
+        FontSize(i) = CNFontSize + 0.5 * i
+    Next i
+    
+    ReDim ParagraphSpace(k - 1)
+    ParagraphSpace(0) = 12
+    ParagraphSpace(1) = 13
+    ParagraphSpace(2) = 20
+    ParagraphSpace(3) = 7
+    ParagraphSpace(4) = 12
+    
+    Application.ScreenUpdating = False
+    
+    With ActiveDocument.PageSetup
+        '   页边距
+        .TopMargin = CentimetersToPoints(2.54)
+        .BottomMargin = CentimetersToPoints(2.54)
+        .LeftMargin = CentimetersToPoints(3.17)
+        .RightMargin = CentimetersToPoints(3.17)
+        '   A4: 21*29.7 cm
+        '   A5: 14.8*21 cm
+        .PageWidth = CentimetersToPoints(21)
+        .PageHeight = CentimetersToPoints(29.7)
+    End With
+    
+    '   如果找页眉、页脚和脚注，用 ActiveDocument.StoryRanges
+    
+    '   To produce random integers in a given range, use this formula:
+    '   Int((upperbound - lowerbound + 1) * Rnd + lowerbound)
+    
+    For Each CNCharacter In ActiveDocument.Characters
+        Randomize
+        With CNCharacter.Font
+            .Name = FontName(Int(i * Rnd))
+            .Size = FontSize(Int(j * Rnd))
+                '   A positive number raises the text, and a negative number lowers it.
+            .Position = Int(3 * Rnd)  ' long type
+            .Spacing = 0    '   single type
+        End With
+    Next
+    
+    For Each CNParagraph In ActiveDocument.Paragraphs
+        Randomize
+        With CNParagraph
+            .CharacterUnitFirstLineIndent = 2
+            .LineSpacing = ParagraphSpace(Int(k * Rnd))
+        End With
+    Next
+    
+    Application.ScreenUpdating = True
+End Sub
+
